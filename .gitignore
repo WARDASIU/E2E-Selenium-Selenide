@@ -38,3 +38,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Allure ###
+allure-results/
+allure-report/
+
+### App under test (clone separately) ###
+spring-petclinic/
