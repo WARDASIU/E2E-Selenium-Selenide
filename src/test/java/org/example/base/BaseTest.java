@@ -59,6 +59,6 @@ public abstract class BaseTest {
         if (fromProp != null && !fromProp.isBlank()) {
             return fromProp.trim();
         }
-        return "http://localhost:8080";
+        return "http://localhost:8090";
     }
 }

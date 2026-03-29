@@ -22,9 +22,9 @@ This guide describes how to use **Spring PetClinic** on GitHub for E2E testing a
 
 3. (Optional) Run the app with Docker to confirm it works:
    ```bash
-   docker run -p 8080:8080 springcommunity/spring-petclinic
+   docker run -p 8090:8080 springcommunity/spring-petclinic
    ```
-   - Open **http://localhost:8080** and check the PetClinic welcome page.
+   - Open **http://localhost:8090** and check the PetClinic welcome page (host **8090** → container **8080**).
 
 ---
 
@@ -36,7 +36,7 @@ This guide describes how to use **Spring PetClinic** on GitHub for E2E testing a
 2. **Configure the stack**  
    In your test project, configure:
    - **Selenium** — browser automation (often pulled in via Selenide).
-   - **Selenide** — concise API and built-in waits; set `baseUrl` to PetClinic (e.g. `http://localhost:8080` or the CI URL).
+   - **Selenide** — concise API and built-in waits; set `baseUrl` to PetClinic (default `http://localhost:8090`, or override with `BASE_URL` / `-Dbase.url=`).
    - **TestNG** — test lifecycle, suites, and parallel execution.
    - **Allure** — reporting (Surefire + Allure Maven/Gradle plugins, Allure–TestNG adapter).
 

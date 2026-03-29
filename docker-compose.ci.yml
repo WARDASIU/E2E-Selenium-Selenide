@@ -1,6 +1,11 @@
+# Petclinic listens on 8080 inside the container. Map 8090 on the host for browser/debug access.
+# The e2e service still uses http://petclinic:8080 on the Docker network.
+
 services:
   petclinic:
     image: springcommunity/spring-petclinic:latest
+    ports:
+      - "8090:8080"
     networks: [e2e-ci]
 
   e2e:
