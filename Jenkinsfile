@@ -1,10 +1,15 @@
-/**
- * Runs TestNG E2E + Allure. Petclinic must already be reachable at BASE_URL on the agent
- * (deployed app, sidecar, or run `docker compose -f docker-compose.ci.yml run --rm e2e` on a machine that has Docker).
- * Petclinic on the agent must listen on host port 8090 (e.g. -p 8090:8080), or override BASE_URL.
- */
 pipeline {
     agent any
+
+    parameters {
+        string(name: 'GIT_REPO', defaultValue: '', trim: true, description: 'Inline Pipeline only: clone URL. Leave empty for Pipeline script from SCM.')
+        string(name: 'GIT_BRANCH', defaultValue: 'master', trim: true, description: 'Branch to clone')
+    }
+
+    tools {
+        maven 'Maven'
+        jdk 'JDK'
+    }
 
     options {
         timestamps()
@@ -17,6 +22,17 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    if (params.GIT_REPO?.trim()) {
+                        git branch: params.GIT_BRANCH, url: params.GIT_REPO.trim()
+                    } else {
+                        checkout scm
+                    }
+                }
+            }
+        }
         stage('E2E') {
             steps {
                 sh 'mvn -B clean test'
