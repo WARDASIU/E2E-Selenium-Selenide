@@ -1,5 +1,6 @@
 package org.example.base;
 
+import org.example.config.driver.DriverConfig;
 import org.example.config.TestConfig;
 import org.example.config.driver.ChromeDriverInitializer;
 import org.example.config.driver.DriverInitializer;
@@ -7,42 +8,38 @@ import org.example.config.driver.FirefoxDriverInitializer;
 import org.example.config.enums.BrowserType;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
+import org.example.util.JavaScriptUtils;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import org.example.tests.util.page_objects.LandingPage;
-
-import java.time.Duration;
+import org.example.tests.pos.page_objects.LandingPage;
 
 import static com.codeborne.selenide.Selenide.open;
 
 public abstract class BaseTest {
-    private TestConfig config;
+    protected final TestConfig testConfig = new TestConfig("http://localhost:8080", BrowserType.CHROME);
+    protected final DriverConfig driverConfig = new DriverConfig();
     private WebDriver driver;
     public LandingPage landingPage;
 
     @BeforeSuite
     public void setUp() {
-        config = new TestConfig();
-        Configuration.baseUrl = config.getBaseUrl();
-        Configuration.timeout = config.getDriverTimeoutSeconds() * 1000;
+        Configuration.baseUrl = testConfig.getBaseUrl();
+        Configuration.timeout = driverConfig.getTimeoutSeconds() * 5000;
 
-        DriverInitializer initializer = config.getBrowser() == BrowserType.FIREFOX
+        DriverInitializer initializer = testConfig.getBrowser() == BrowserType.FIREFOX
                 ? new FirefoxDriverInitializer()
                 : new ChromeDriverInitializer();
         driver = initializer.getDriver();
         WebDriverRunner.setWebDriver(driver);
-
-        long wait = config.getDriverTimeoutSeconds();
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(wait));
-        driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(wait));
+        driverConfig.prepareWindowAndTimeouts(driver);
     }
 
     @BeforeMethod
     public void beforeTest() {
         open("");
-        config.enableClickHighlight();
+        JavaScriptUtils.enableClickHighlight();
         landingPage = new LandingPage();
     }
 

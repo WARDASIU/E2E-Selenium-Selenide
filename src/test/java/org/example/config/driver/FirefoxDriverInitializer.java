@@ -4,9 +4,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
-/**
- * Creates and configures WebDriver for Firefox.
- */
 public class FirefoxDriverInitializer implements DriverInitializer {
 
     private final FirefoxDriver firefoxDriver;

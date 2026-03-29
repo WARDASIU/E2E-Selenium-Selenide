@@ -19,6 +19,8 @@
     <selenium.version>4.21.0</selenium.version>
     <webdrivermanager.version>5.6.3</webdrivermanager.version>
     <aspectj.version>1.9.25.1</aspectj.version>
+    <lombok.version>1.18.34</lombok.version>
+    <slf4j.version>2.0.16</slf4j.version>
   </properties>
 
   <dependencyManagement>
@@ -56,6 +58,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- SLF4J binding (removes NOP warning from Selenium / WebDriverManager) -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Allure TestNG Adapter -->
     <dependency>
       <groupId>io.qameta.allure</groupId>
@@ -71,12 +81,12 @@
       <version>${webdrivermanager.version}</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.projectlombok</groupId>
-          <artifactId>lombok</artifactId>
-          <version>RELEASE</version>
-          <scope>provided</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -88,6 +98,13 @@
         <version>3.13.0</version>
         <configuration>
           <release>17</release>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
       </plugin>
 

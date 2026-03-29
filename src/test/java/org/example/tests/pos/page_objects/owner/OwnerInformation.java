@@ -1,4 +1,4 @@
-package org.example.tests.util.page_objects.find_owner;
+package org.example.tests.pos.page_objects.owner;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;

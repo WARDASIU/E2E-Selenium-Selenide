@@ -1,7 +1,8 @@
-package org.example.tests.util.page_objects.find_owner;
+package org.example.tests.pos.page_objects.owner;
 
 import io.qameta.allure.Step;
-import org.example.tests.util.NavigationBar;
+import org.example.tests.pos.NavigationBar;
+import org.example.tests.pos.page_objects.owner.add_owner.AddOwnerPage;
 
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.not;
@@ -9,7 +10,6 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
 public class FindOwners extends NavigationBar {
-
     @Step("Set owner last name")
     public FindOwners setOwnerLastName(String lastName) {
         $("#lastName").setValue(lastName);
@@ -22,17 +22,11 @@ public class FindOwners extends NavigationBar {
         return this;
     }
 
-    @Step("Search owner and open info page")
-    public OwnerInformation findOwnerAndOpen(String lastName) {
-        setOwnerLastName(lastName);
-        findOwner();
-        return new OwnerInformation();
-    }
-
     @Step("Click add owner")
-    public FindOwners addOwner() {
+    public AddOwnerPage clickAddOwner() {
         $x("//a[@href='/owners/new']").click();
-        return this;
+
+        return new AddOwnerPage();
     }
 
     @Step("Check if error alert is shown")
