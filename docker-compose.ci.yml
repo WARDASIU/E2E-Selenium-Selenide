@@ -1,6 +1,3 @@
-# Petclinic listens on 8080 inside the container. Map 8090 on the host for browser/debug access.
-# The e2e service still uses http://petclinic:8080 on the Docker network.
-
 services:
   petclinic:
     image: springcommunity/spring-petclinic:latest
@@ -25,7 +22,7 @@ services:
       - |
         set -euo pipefail
         echo "Waiting for Petclinic on petclinic:8080..."
-        for attempt in $$(seq 1 90); do
+        for attempt in $(seq 1 90); do
           if { echo >/dev/tcp/petclinic/8080; } 2>/dev/null; then
             echo "Petclinic is up."
             break
