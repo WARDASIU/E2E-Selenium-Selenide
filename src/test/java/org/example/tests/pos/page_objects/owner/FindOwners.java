@@ -1,6 +1,7 @@
 package org.example.tests.pos.page_objects.owner;
 
 import io.qameta.allure.Step;
+import org.example.tests.main.FindOwnersPageTests;
 import org.example.tests.pos.NavigationBar;
 import org.example.tests.pos.page_objects.owner.add_owner.AddOwnerPage;
 
@@ -17,9 +18,17 @@ public class FindOwners extends NavigationBar {
     }
 
     @Step("Click find owner")
-    public FindOwners findOwner() {
+    public FindOwners clickFindOwner() {
         $x("//button[normalize-space()='Find Owner']").click();
-        return this;
+
+        return new FindOwners();
+    }
+
+    @Step("Click find owner")
+    public OwnerFoundPage clickFindOwnerWithNavigation() {
+        $x("//button[normalize-space()='Find Owner']").click();
+
+        return new OwnerFoundPage();
     }
 
     @Step("Click add owner")

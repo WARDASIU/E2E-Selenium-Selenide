@@ -15,7 +15,21 @@ public class FindOwnersPageTests extends BaseTest {
         landingPage
                 .navigateToFindOwnersPage()
                 .setOwnerLastName("INCORRECT_NAME")
-                .findOwner()
+                .clickFindOwner()
                 .assertErrorAlert(true);
+    }
+
+    @Test
+    @Tag("owner")
+    @Epic("FIND OWNER PAGE")
+    @Feature("SEARCH RESULTS TABLE")
+    public void editOwnerDataTest() {
+        landingPage
+                .navigateToFindOwnersPage()
+                .setOwnerLastName("Kowalski")
+                .clickFindOwnerWithNavigation()
+                .assertOwnersTableVisible()
+                .assertOwnerRowCountAtLeast(1)
+                .assertOwnerRow(1, "Jan Kowalski", "21 Jump Street", "Zawoja", "1231231231");
     }
 }

@@ -12,10 +12,6 @@ public class DriverConfig {
         return timeoutSeconds;
     }
 
-    public void setTimeoutSeconds(long timeoutSeconds) {
-        this.timeoutSeconds = timeoutSeconds;
-    }
-
     public void waitForBrowserWindow(WebDriver driver) {
         new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
                 .until(d -> !d.getWindowHandles().isEmpty());

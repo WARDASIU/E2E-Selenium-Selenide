@@ -7,15 +7,20 @@ public class AddOwnerDataprovider {
     @DataProvider(name = "ownerFormData")
     public static Object[][] ownerFormData() {
         return new Object[][] {
-                {
-                    OwnerFormData.builder()
+                { OwnerFormData.builder()
                         .firstName("Jan")
                         .lastName("Kowalski")
                         .address("21 Jump Street")
                         .city("Zawoja")
                         .telephone("1231231231")
-                        .build()
-                }
+                        .build() },
+                { OwnerFormData.builder()
+                        .firstName("Anna")
+                        .lastName("Nowak")
+                        .address("10 Test Avenue")
+                        .city("Krakow")
+                        .telephone("3213213213")
+                        .build() }
         };
     }
 }
