@@ -13,7 +13,12 @@ public class ChromeDriverInitializer implements DriverInitializer {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--start-maximized");
+        if (isHeadless()) {
+            options.addArguments("--headless=new");
+            options.addArguments("--window-size=1920,1080");
+        } else {
+            options.addArguments("--start-maximized");
+        }
 
         this.chromeDriver = new ChromeDriver(options);
     }
@@ -21,5 +26,10 @@ public class ChromeDriverInitializer implements DriverInitializer {
     @Override
     public WebDriver getDriver() {
         return chromeDriver;
+    }
+
+    private static boolean isHeadless() {
+        return "true".equalsIgnoreCase(System.getenv("HEADLESS"))
+                || "true".equalsIgnoreCase(System.getenv("CI"));
     }
 }

@@ -1,8 +1,10 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="E2E Test Suite" parallel="methods" thread-count="2">
+<suite name="E2E Test Suite" parallel="false">
     <test name="UI Tests">
         <classes>
             <class name="org.example.tests.SampleTest"/>
+            <class name="org.example.tests.main.AddOwnerPageTests"/>
+            <class name="org.example.tests.main.FindOwnersPageTests"/>
         </classes>
     </test>
 </suite>

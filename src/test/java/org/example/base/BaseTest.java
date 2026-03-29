@@ -18,7 +18,7 @@ import org.example.tests.pos.page_objects.LandingPage;
 import static com.codeborne.selenide.Selenide.open;
 
 public abstract class BaseTest {
-    protected final TestConfig testConfig = new TestConfig("http://localhost:8080", BrowserType.CHROME);
+    protected final TestConfig testConfig = new TestConfig(resolveBaseUrl(), BrowserType.CHROME);
     protected final DriverConfig driverConfig = new DriverConfig();
     private WebDriver driver;
     public LandingPage landingPage;
@@ -48,5 +48,17 @@ public abstract class BaseTest {
         if (driver != null) {
             WebDriverRunner.closeWebDriver();
         }
+    }
+
+    private static String resolveBaseUrl() {
+        String fromEnv = System.getenv("BASE_URL");
+        if (fromEnv != null && !fromEnv.isBlank()) {
+            return fromEnv.trim();
+        }
+        String fromProp = System.getProperty("base.url");
+        if (fromProp != null && !fromProp.isBlank()) {
+            return fromProp.trim();
+        }
+        return "http://localhost:8080";
     }
 }
