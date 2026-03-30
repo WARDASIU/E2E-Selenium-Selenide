@@ -69,7 +69,10 @@ pipeline {
         stage('E2E') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh 'mvn -B clean test -DsuiteXmlFile=testng-ci.xml'
+                    sh 'mvn -B clean test -Dbrowser=chrome -DremoteUrl=http://host.docker.internal:4444/wd/hub'
+                }
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh 'mvn -B test -Dbrowser=firefox -DremoteUrl=http://host.docker.internal:4445/wd/hub'
                 }
             }
         }
