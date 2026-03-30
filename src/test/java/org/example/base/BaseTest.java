@@ -24,6 +24,10 @@ public abstract class BaseTest {
         Configuration.timeout = driverConfig.getTimeoutSeconds() * 5000;
         Configuration.browser = "chrome";
         Configuration.headless = resolveHeadless();
+        String remoteUrl = System.getenv("SELENIUM_REMOTE_URL");
+        if (remoteUrl != null && !remoteUrl.isBlank()) {
+            Configuration.remote = remoteUrl.trim();
+        }
     }
 
     @BeforeMethod(alwaysRun = true)
