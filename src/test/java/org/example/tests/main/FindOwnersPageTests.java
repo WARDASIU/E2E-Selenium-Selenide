@@ -2,16 +2,17 @@ package org.example.tests.main;
 
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
-import io.qameta.allure.testng.Tag;
+import io.qameta.allure.Story;
 import org.example.base.BaseTest;
 import org.testng.annotations.Test;
 
+@Epic("Owner Management")
+@Feature("Find Owners")
 public class FindOwnersPageTests extends BaseTest {
+
     @Test
-    @Tag("owner")
-    @Epic("FIND OWNER PAGE")
-    @Feature("INVALID LAST NAME TEST")
-    public void testInvalidLastname(){
+    @Story("Search with invalid last name shows an error alert")
+    public void testInvalidLastname() {
         landingPage
                 .navigateToFindOwnersPage()
                 .setOwnerLastName("INCORRECT_NAME")
@@ -20,9 +21,7 @@ public class FindOwnersPageTests extends BaseTest {
     }
 
     @Test
-    @Tag("owner")
-    @Epic("FIND OWNER PAGE")
-    @Feature("SEARCH RESULTS TABLE")
+    @Story("Search by last name returns matching owners in a table")
     public void editOwnerDataTest() {
         landingPage
                 .navigateToFindOwnersPage()

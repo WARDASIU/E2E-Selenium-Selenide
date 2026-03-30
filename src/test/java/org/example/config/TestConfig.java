@@ -2,14 +2,11 @@ package org.example.config;
 
 import org.example.config.enums.BrowserType;
 
-
 public class TestConfig {
-    private BrowserType browser;
-    private String baseUrl;
+    private final BrowserType browser;
+    private final String baseUrl;
 
-    private long driverTimeoutSeconds = 30;
-
-    public TestConfig(String baseUrl, BrowserType browser){
+    public TestConfig(String baseUrl, BrowserType browser) {
         this.baseUrl = baseUrl;
         this.browser = browser;
     }
@@ -22,7 +19,17 @@ public class TestConfig {
         return baseUrl;
     }
 
-    public long getDriverTimeoutSeconds() {
-        return driverTimeoutSeconds;
+    public static String resolveBaseUrl() {
+        String fromEnv = System.getenv("BASE_URL");
+        if (fromEnv != null && !fromEnv.isBlank()) return fromEnv.trim();
+        String fromProp = System.getProperty("base.url");
+        if (fromProp != null && !fromProp.isBlank()) return fromProp.trim();
+        return "http://localhost:8090";
+    }
+
+    public static boolean resolveHeadless() {
+        String fromEnv = System.getenv("HEADLESS");
+        if (fromEnv != null && !fromEnv.isBlank()) return Boolean.parseBoolean(fromEnv.trim());
+        return Boolean.parseBoolean(System.getProperty("headless", "false"));
     }
 }

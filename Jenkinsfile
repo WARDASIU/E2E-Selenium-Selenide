@@ -14,7 +14,6 @@ pipeline {
     environment {
         HEADLESS = 'true'
         BASE_URL = 'http://host.docker.internal:8090'
-        SELENIUM_REMOTE_URL = 'http://host.docker.internal:4444/wd/hub'
     }
 
     stages {
@@ -29,7 +28,8 @@ pipeline {
         stage('Start Petclinic') {
             steps {
                 sh 'docker run -d --name petclinic -p 8090:8080 springcommunity/spring-petclinic:latest'
-                sh 'docker run -d --name selenium-chrome -p 4444:4444 --shm-size=2g selenium/standalone-chrome:latest'
+                sh 'docker run -d --name selenium-chrome   -p 4444:4444 --shm-size=2g -e SE_SESSION_REQUEST_TIMEOUT=120 -e SE_NODE_SESSION_TIMEOUT=120 selenium/standalone-chrome:latest'
+                sh 'docker run -d --name selenium-firefox  -p 4445:4444 --shm-size=2g -e SE_SESSION_REQUEST_TIMEOUT=120 -e SE_NODE_SESSION_TIMEOUT=120 selenium/standalone-firefox:latest'
                 sh '''
                     echo "Waiting for Petclinic..."
                     for i in $(seq 1 30); do
@@ -42,13 +42,24 @@ pipeline {
                     done
                 '''
                 sh '''
-                    echo "Waiting for Selenium..."
+                    echo "Waiting for Selenium Chrome..."
                     for i in $(seq 1 12); do
                         if curl -sf http://host.docker.internal:4444/wd/hub/status; then
-                            echo "Selenium is up."
+                            echo "Selenium Chrome is up."
                             break
                         fi
-                        if [ "$i" -eq 12 ]; then echo "Timeout waiting for Selenium."; exit 1; fi
+                        if [ "$i" -eq 12 ]; then echo "Timeout waiting for Selenium Chrome."; exit 1; fi
+                        sleep 5
+                    done
+                '''
+                sh '''
+                    echo "Waiting for Selenium Firefox..."
+                    for i in $(seq 1 12); do
+                        if curl -sf http://host.docker.internal:4445/wd/hub/status; then
+                            echo "Selenium Firefox is up."
+                            break
+                        fi
+                        if [ "$i" -eq 12 ]; then echo "Timeout waiting for Selenium Firefox."; exit 1; fi
                         sleep 5
                     done
                 '''
@@ -57,34 +68,24 @@ pipeline {
 
         stage('E2E') {
             steps {
-                sh 'mvn -B clean test'
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh 'mvn -B clean test -DsuiteXmlFile=testng-ci.xml'
+                }
             }
         }
 
-        stage('Allure Report') {
-            steps {
-                sh 'mvn -B allure:report'
-            }
-        }
     }
 
     post {
         always {
-            sh 'docker stop petclinic selenium-chrome && docker rm petclinic selenium-chrome || true'
-            archiveArtifacts artifacts: 'target/allure-results/**/*', allowEmptyArchive: true
-            script {
-                if (fileExists('target/allure-results')) {
-                    allure([
-                        includeProperties : false,
-                        jdk               : '',
-                        properties        : [],
-                        reportBuildPolicy : 'ALWAYS',
-                        results           : [[path: 'target/allure-results']]
-                    ])
-                } else {
-                    echo 'No Allure results found in target/allure-results.'
-                }
-            }
+            sh 'docker stop petclinic selenium-chrome selenium-firefox && docker rm petclinic selenium-chrome selenium-firefox || true'
+            allure([
+                includeProperties : false,
+                jdk               : '',
+                properties        : [],
+                reportBuildPolicy : 'ALWAYS',
+                results           : [[path: 'target/allure-results']]
+            ])
         }
         success {
             echo 'Pipeline completed successfully.'
