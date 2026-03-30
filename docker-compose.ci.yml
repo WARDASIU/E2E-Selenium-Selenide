@@ -5,36 +5,5 @@ services:
       - "8090:8080"
     networks: [e2e-ci]
 
-  e2e:
-    image: markhobson/maven-chrome:jdk-17
-    depends_on:
-      - petclinic
-    networks: [e2e-ci]
-    environment:
-      BASE_URL: http://petclinic:8080
-      HEADLESS: "true"
-    volumes:
-      - .:/workspace
-    working_dir: /workspace
-    command:
-      - /bin/bash
-      - -lc
-      - |
-        set -euo pipefail
-        echo "Waiting for Petclinic on petclinic:8080..."
-        for attempt in $(seq 1 90); do
-          if { echo >/dev/tcp/petclinic/8080; } 2>/dev/null; then
-            echo "Petclinic is up."
-            break
-          fi
-          if [[ "$$attempt" -eq 90 ]]; then
-            echo "Timeout waiting for Petclinic."
-            exit 1
-          fi
-          sleep 2
-        done
-        mvn -B clean test
-        mvn -B allure:report
-
 networks:
   e2e-ci:

@@ -2,11 +2,14 @@ package org.example.config;
 
 import org.example.config.enums.BrowserType;
 
-public class TestConfig {
-    private final String baseUrl;
-    private final BrowserType browser;
 
-    public TestConfig(String baseUrl, BrowserType browser) {
+public class TestConfig {
+    private BrowserType browser;
+    private String baseUrl;
+
+    private long driverTimeoutSeconds = 30;
+
+    public TestConfig(String baseUrl, BrowserType browser){
         this.baseUrl = baseUrl;
         this.browser = browser;
     }
@@ -17,5 +20,9 @@ public class TestConfig {
 
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    public long getDriverTimeoutSeconds() {
+        return driverTimeoutSeconds;
     }
 }

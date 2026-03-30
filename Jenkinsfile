@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    parameters {
-        string(name: 'GIT_REPO', defaultValue: '', trim: true, description: 'Inline Pipeline only: clone URL. Leave empty for Pipeline script from SCM.')
-        string(name: 'GIT_BRANCH', defaultValue: 'master', trim: true, description: 'Branch to clone')
-    }
-
     tools {
         maven 'Maven'
         jdk 'JDK'
@@ -24,18 +19,40 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    if (params.GIT_REPO?.trim()) {
-                        git branch: params.GIT_BRANCH, url: params.GIT_REPO.trim()
-                    } else {
-                        checkout scm
-                    }
-                }
+                git branch: 'master',
+                    url: 'https://github.com/WARDASIU/E2E-Selenium-Selenide.git/',
+                    credentialsId: 'github-creds'
             }
         }
+
+        stage('Start Petclinic') {
+            steps {
+                sh 'docker compose up -d petclinic'
+                sh '''
+                    echo "Waiting for Petclinic..."
+                    for i in $(seq 1 90); do
+                        if curl -sf http://localhost:8090; then
+                            echo "Petclinic is up."
+                            break
+                        fi
+                        if [ "$i" -eq 90 ]; then
+                            echo "Timeout waiting for Petclinic."
+                            exit 1
+                        fi
+                        sleep 2
+                    done
+                '''
+            }
+        }
+
         stage('E2E') {
             steps {
                 sh 'mvn -B clean test'
+            }
+        }
+
+        stage('Allure Report') {
+            steps {
                 sh 'mvn -B allure:report'
             }
         }
@@ -43,6 +60,7 @@ pipeline {
 
     post {
         always {
+            sh 'docker compose down'
             archiveArtifacts artifacts: 'target/allure-results/**/*', allowEmptyArchive: true
             script {
                 if (fileExists('target/allure-results')) {
@@ -54,9 +72,15 @@ pipeline {
                         results           : [[path: 'target/allure-results']]
                     ])
                 } else {
-                    echo 'No Allure results in target/allure-results.'
+                    echo 'No Allure results found in target/allure-results.'
                 }
             }
+        }
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
